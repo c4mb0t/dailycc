@@ -3,7 +3,7 @@ import datetime
 from dateutil import relativedelta
 
 totals = dict()
-cutoffs = {'Chase Card': 23, 'BOA Card': 10, 'JetBlue Card': 14}
+cutoffs = {'Chase Card': 23, 'BOA Card': 10, 'JetBlue Card': 14, 'Nordstrom Card': 26}
 today = datetime.date.today()
 with open('data.csv', 'rb') as csvfile:
     reader = csv.reader(csvfile)
@@ -22,7 +22,7 @@ with open('data.csv', 'rb') as csvfile:
         endtime = datetime.date(today.year, today.month+1, cutoffs[card])
         starttime = endtime - relativedelta.relativedelta(months=1)
         if transtype == "debit" and date > starttime and date < endtime:
-            totals[card] = totals[card] + charge
+            totals[card] = round(totals[card] + charge, 2)
             #if card == "BOA Card":
             #    print "S: %s, E: %s, Card: %s, Date: %s, Charge: %f, Total: %f" % (starttime, endtime, card, date, charge, totals[card])
 print totals
