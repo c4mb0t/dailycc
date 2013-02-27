@@ -1,6 +1,9 @@
 import csv
 import datetime
 from dateutil import relativedelta
+from email.mime.text import MIMEText
+from subprocess import Popen, PIPE
+
 
 totals = dict()
 cutoffs = {'Chase Card': 23, 'BOA Card': 10, 'JetBlue Card': 14, 'Nordstrom Card': 26}
@@ -26,3 +29,10 @@ with open('data.csv', 'rb') as csvfile:
             #if card == "BOA Card":
             #    print "S: %s, E: %s, Card: %s, Date: %s, Charge: %f, Total: %f" % (starttime, endtime, card, date, charge, totals[card])
 print totals
+msg = MIMEText("Credit card totals: \n %s" % totals)
+msg["From"] = "dailycc@cowboys.dreamhosters.com"
+msg["To"] = ""
+msg["Cc"] = ""
+msg["Subject"] = "Daily CC Report"
+p = Popen(["/usr/sbin/sendmail", "-t"], stdin=PIPE)
+p.communicate(msg.as_string())
