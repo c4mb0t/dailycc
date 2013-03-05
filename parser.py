@@ -22,7 +22,9 @@ with open('data.csv', 'rb') as csvfile:
         transtype = row[4]
         if not card in totals:
             totals[card] = 0
-        endtime = datetime.date(today.year, today.month+1, cutoffs[card])
+        endtime = datetime.date(today.year, today.month, cutoffs[card])
+        if today.day > cutoffs[card]:
+            endtime = endtime + relativedelta.relativedelta(months=1)
         starttime = endtime - relativedelta.relativedelta(months=1)
         if transtype == "debit" and date > starttime and date < endtime:
             totals[card] = round(totals[card] + charge, 2)
