@@ -7,6 +7,7 @@ from subprocess import Popen, PIPE
 
 totals = dict()
 cutoffs = {'Chase Card': 23, 'BOA Card': 10, 'JetBlue Card': 14, 'Nordstrom Card': 26}
+pretty_cutoffs = dict()
 today = datetime.date.today()
 with open('data.csv', 'rb') as csvfile:
     reader = csv.reader(csvfile)
@@ -26,13 +27,16 @@ with open('data.csv', 'rb') as csvfile:
         if today.day > cutoffs[card]:
             endtime = endtime + relativedelta.relativedelta(months=1)
         starttime = endtime - relativedelta.relativedelta(months=1)
+        if not card in pretty_cutoffs:
+            pretty_cutoffs[card] = "%d/%d" % (endtime.month, endtime.day)
         if transtype == "debit" and date > starttime and date < endtime:
             totals[card] = round(totals[card] + charge, 2)
             #if card == "BOA Card":
             #    print "S: %s, E: %s, Card: %s, Date: %s, Charge: %f, Total: %f" % (starttime, endtime, card, date, charge, totals[card])
 print totals
-msg = MIMEText("Credit card totals: \n %s" % totals)
-msg["From"] = "dailycc@cowboys.dreamhosters.com"
+print pretty_cutoffs
+msg = MIMEText("Credit card totals: \n%s\nCredit card cutoffs:\n%s" % (totals, pretty_cutoffs))
+msg["From"] = ""
 msg["To"] = ""
 msg["Cc"] = ""
 msg["Subject"] = "Daily CC Report"
